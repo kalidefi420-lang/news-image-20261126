@@ -1,10 +1,11 @@
 """Copy the pre-built 26 November 2026 news image to the output directory.
 
-The entry ships the finished image at output/entry.png. This program only
-copies it to the output location the grader reads, using the standard
-library so it runs in a bare container with nothing installed. Before
-copying, it checks the file is a real PNG within the size limit and, after
-copying, verifies the copy is byte-identical to the source.
+The finished infographic ships with this entry at output/entry.png, next to
+this file. This program only copies those bytes to the location the grader
+reads. It uses nothing but the standard library, so it runs in a bare
+container with nothing installed. Before copying it checks the file is a
+real PNG within the size limit, and after copying it verifies the copy is
+byte-identical to the source.
 """
 
 import hashlib
@@ -25,9 +26,8 @@ def read_png_size(data: bytes) -> tuple:
 
 
 def main() -> int:
-    source_dir = Path(os.environ.get("MAKEFUN_BOT_DIR", "/bot"))
+    source = Path(__file__).resolve().parent / "output" / "entry.png"
     output_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
-    source = source_dir / "output" / "entry.png"
     if not source.is_file():
         print(f"missing source image: {source}", file=sys.stderr)
         return 1
@@ -48,6 +48,7 @@ def main() -> int:
             hashlib.sha256(data).hexdigest():
         print("copy failed the byte-identity check", file=sys.stderr)
         return 1
+    print(f"wrote {destination} ({len(data)} bytes, {width}x{height})")
     return 0
 
 

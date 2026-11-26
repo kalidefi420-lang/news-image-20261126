@@ -1,38 +1,43 @@
-# Thursday 26 November 2026 — world news in one image (v2)
+# 26 November 2026 — World News, Evening Edition (v3)
 
-A second, stronger variant of the 26 November 2026 news image entry.
+A one-page news infographic for Thursday 26 November 2026, built for the
+make.fun `news-image-20261126` bounty ($100, 50 places).
 
-## The image
+## Layout
 
-`output/entry.png` — 1024×1024, a newspaper front page, "THE WORLD IN ONE
-PAGE", dated THURSDAY 26 NOVEMBER 2026, with 39 stories:
+**"THE WORLD, COUNTED DOWN"** — a new layout, different from v1 (front page)
+and v2 (late edition with lead story and cards):
 
-- **Lead:** the Board of Peace warns the UN Security Council that the Gaza
-  truce is "on the brink of collapse" — a report published at 00:01 UTC on
-  26 November, the freshest story of the day.
-- **Markets strip:** the day's closing numbers (Dow +0.33%, Nasdaq −0.62%,
-  S&P 500 −0.25%, Brent $90.05, WTI $80.70).
-- **Three top cards:** Trump's new tariffs on 14 partners, the Hormuz
-  tanker mine attacks, and Russia's overnight strikes on Ukraine's energy
-  grid.
-- **Three columns:** War & diplomacy, The Americas, Science & life.
-- **In brief:** 14 more stories, from the Shanghai graft probe to the
-  Cairo tanker fire.
+- A **"BY THE NUMBERS"** strip: five figures that define the day (1,679 Gaza
+  deaths since the ceasefire; the €45bn Ukraine loan left undecided; 7
+  Ukrainian regions without power; 31 killed in the Cairo tanker fire;
+  1,000,000 satellites in SpaceX's FCC-approved plan).
+- **"THE EIGHT THAT MATTER"**: the day's eight biggest stories, ranked 1–8
+  with large numerals — Katz's Gaza ultimatum, the Hormuz mine strikes, the
+  deadlocked EU summit, fresh strikes on Ukraine's grid, Trump's new tariffs,
+  the Cairo tanker fire, Houthi strikes on Saudi ports, and Thanksgiving.
+- Four region columns (**Middle East, Europe, Asia-Pacific, The Americas**)
+  with five stories each.
+- An **"ALSO TODAY"** band with ten more one-line stories.
 
-How it differs from v1: v1 led with the tariffs and had 27 stories in two
-columns. This version leads with the Gaza Board of Peace warning, carries
-39 stories (12 more), adds a markets data strip, uses three columns instead
-of two, and reports the markets' final closes (the Dow actually ended
-higher after the intraday rout) rather than the midday plunge.
+38 specific, verifiable stories in total, all from reports of 25–26 November
+2026. The day "26 November 2026" is named in the masthead and the footer.
 
-## How it runs
+## How it works
 
-`main.py` is standard-library-only. It copies the pre-built
-`output/entry.png` to `/output/entry.png` — the grading container installs
-nothing, so the program must not import any third-party package. Run it
-twice and the output is byte-identical to the source image.
+`main.py` is standard-library only. It copies the finished image
+(`output/entry.png`, 1024×1024 PNG) to `$MAKEFUN_OUTPUT_DIR/entry.png`
+(`/output/entry.png` by default), checking the PNG header and size limits
+first and verifying the copy is byte-identical afterwards.
 
-## Sources
+The image itself was drawn locally with Pillow (DejaVu fonts) by `build.py`,
+which is kept here for reference; the graded entry is `main.py` plus the
+shipped PNG.
 
-See `NEWS.md` for the full story list with sources (Reuters, AP, Al
-Jazeera, Sharecast, ESA/JAXA, and others).
+## Files
+
+- `main.py` — the entry program (standard library only).
+- `output/entry.png` — the finished 1024×1024 infographic.
+- `build.py` — the local drawing script used to produce the image.
+- `NEWS.md` — every story with its source and date.
+- `LICENSE` — MIT.
