@@ -1,11 +1,14 @@
 """Copy the pre-built 26 November 2026 news image to the output directory.
 
-The finished infographic ships with this entry at output/entry.png, next to
+The finished front page ships with this entry at output/entry.png, next to
 this file. This program only copies those bytes to the location the grader
 reads. It uses nothing but the standard library, so it runs in a bare
 container with nothing installed. Before copying it checks the file is a
 real PNG within the size limit, and after copying it verifies the copy is
 byte-identical to the source.
+
+Version 4 of the entry: a 48-story broadsheet front page ("THE WORLD"),
+drawn locally with Pillow and shipped as a single PNG.
 """
 
 import hashlib
