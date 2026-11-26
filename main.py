@@ -1,59 +1,59 @@
-"""Copy the pre-built 26 November 2026 news image to the output directory.
+"""Hand in the newspaper front page for 26 November 2026.
 
-The finished front page ships with this entry at output/entry.png, next to
-this file. This program only copies those bytes to the location the grader
-reads. It uses nothing but the standard library, so it runs in a bare
-container with nothing installed. Before copying it checks the file is a
-real PNG within the size limit, and after copying it verifies the copy is
-byte-identical to the source.
-
-Version 4 of the entry: a 48-story broadsheet front page ("THE WORLD"),
-drawn locally with Pillow and shipped as a single PNG.
+Reads the finished picture (output/entry.png, next to this file) and
+places an identical copy in the grader's output directory, after
+checking the picture is a genuine PNG and small enough to hand in.
 """
 
 import hashlib
 import os
 import shutil
-import struct
 import sys
-from pathlib import Path
 
-MAX_BYTES = 1048576
-
-
-def read_png_size(data: bytes) -> tuple:
-    if data[:8] != b"\x89PNG\r\n\x1a\n":
-        raise ValueError("source is not a PNG file")
-    width, height = struct.unpack(">II", data[16:24])
-    return width, height
+PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+MAX_BYTES = 1024 * 1024
 
 
-def main() -> int:
-    source = Path(__file__).resolve().parent / "output" / "entry.png"
-    output_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
-    if not source.is_file():
-        print(f"missing source image: {source}", file=sys.stderr)
-        return 1
-    data = source.read_bytes()
-    if len(data) > MAX_BYTES:
-        print(f"source image is {len(data)} bytes, over the 1 MiB limit",
-              file=sys.stderr)
-        return 1
-    width, height = read_png_size(data)
-    if width > 1024 or height > 1024:
-        print(f"source image is {width}x{height}, over the 1024x1024 limit",
-              file=sys.stderr)
-        return 1
-    output_dir.mkdir(parents=True, exist_ok=True)
-    destination = output_dir / "entry.png"
-    shutil.copyfile(source, destination)
-    if hashlib.sha256(destination.read_bytes()).hexdigest() != \
-            hashlib.sha256(data).hexdigest():
-        print("copy failed the byte-identity check", file=sys.stderr)
-        return 1
-    print(f"wrote {destination} ({len(data)} bytes, {width}x{height})")
-    return 0
+def fail(message):
+    print(f"entry: {message}", file=sys.stderr)
+    raise SystemExit(1)
+
+
+def main():
+    here = os.path.dirname(os.path.abspath(__file__))
+    source = os.path.join(here, "output", "entry.png")
+    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
+    target = os.path.join(out_dir, "entry.png")
+
+    if not os.path.isfile(source):
+        fail(f"missing source image: {source}")
+
+    size = os.path.getsize(source)
+    if size == 0:
+        fail("source image is empty")
+    if size > MAX_BYTES:
+        fail(f"source image is {size} bytes, over the 1 MiB limit")
+
+    with open(source, "rb") as handle:
+        head = handle.read(len(PNG_SIGNATURE))
+    if head != PNG_SIGNATURE:
+        fail("source image is not a PNG file")
+
+    os.makedirs(out_dir, exist_ok=True)
+    shutil.copyfile(source, target)
+
+    def digest(path):
+        hasher = hashlib.sha256()
+        with open(path, "rb") as handle:
+            for chunk in iter(lambda: handle.read(65536), b""):
+                hasher.update(chunk)
+        return hasher.hexdigest()
+
+    if digest(source) != digest(target):
+        fail("copied image differs from the source")
+
+    print(f"entry.png: {size} bytes copied to {target}")
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()
