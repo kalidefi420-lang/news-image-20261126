@@ -1,59 +1,69 @@
-"""Hand in the newspaper front page for 26 November 2026.
+"""Hand in the newspaper front page for Thursday 26 November 2026.
 
-Reads the finished picture (output/entry.png, next to this file) and
-places an identical copy in the grader's output directory, after
-checking the picture is a genuine PNG and small enough to hand in.
+The finished page is shipped with this entry as output/entry.png, next to
+this file. This program places an identical copy of that picture in the
+grader's output directory. It uses only the standard library, so it runs
+in a bare container with nothing installed.
+
+Before copying, it checks the picture is a genuine PNG and small enough
+to hand in. After copying, it hashes both files and refuses to finish
+unless the copy matches the original byte for byte.
 """
 
 import hashlib
 import os
 import shutil
 import sys
+from pathlib import Path
 
-PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
-MAX_BYTES = 1024 * 1024
+HERE = Path(__file__).resolve().parent
+SOURCE = HERE / "output" / "entry.png"
+MAX_BYTES = 1_048_576
+PNG_MAGIC = b"\x89PNG\r\n\x1a\n"
 
 
-def fail(message):
-    print(f"entry: {message}", file=sys.stderr)
-    raise SystemExit(1)
+def digest(path):
+    """SHA-256 of a file, read in 64 KiB chunks."""
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        while True:
+            block = fh.read(65536)
+            if not block:
+                break
+            h.update(block)
+    return h.hexdigest()
 
 
 def main():
-    here = os.path.dirname(os.path.abspath(__file__))
-    source = os.path.join(here, "output", "entry.png")
-    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
-    target = os.path.join(out_dir, "entry.png")
+    out_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
+    out_dir.mkdir(parents=True, exist_ok=True)
+    target = out_dir / "entry.png"
 
-    if not os.path.isfile(source):
-        fail(f"missing source image: {source}")
+    if not SOURCE.is_file():
+        print(f"missing: {SOURCE}", file=sys.stderr)
+        return 1
+    size = SOURCE.stat().st_size
+    if size == 0 or size > MAX_BYTES:
+        print(f"entry.png is {size} bytes, outside the 1..{MAX_BYTES} range", file=sys.stderr)
+        return 1
+    with open(SOURCE, "rb") as fh:
+        head = fh.read(len(PNG_MAGIC))
+    if head != PNG_MAGIC:
+        print("entry.png does not start with the PNG signature", file=sys.stderr)
+        return 1
 
-    size = os.path.getsize(source)
-    if size == 0:
-        fail("source image is empty")
-    if size > MAX_BYTES:
-        fail(f"source image is {size} bytes, over the 1 MiB limit")
-
-    with open(source, "rb") as handle:
-        head = handle.read(len(PNG_SIGNATURE))
-    if head != PNG_SIGNATURE:
-        fail("source image is not a PNG file")
-
-    os.makedirs(out_dir, exist_ok=True)
-    shutil.copyfile(source, target)
-
-    def digest(path):
-        hasher = hashlib.sha256()
-        with open(path, "rb") as handle:
-            for chunk in iter(lambda: handle.read(65536), b""):
-                hasher.update(chunk)
-        return hasher.hexdigest()
-
-    if digest(source) != digest(target):
-        fail("copied image differs from the source")
-
-    print(f"entry.png: {size} bytes copied to {target}")
+    shutil.copyfile(SOURCE, target)
+    src_hash = digest(SOURCE)
+    dst_hash = digest(target)
+    if src_hash != dst_hash:
+        print("copy failed verification: hashes differ", file=sys.stderr)
+        return 1
+    if target.stat().st_size != size:
+        print("copy failed verification: sizes differ", file=sys.stderr)
+        return 1
+    print(f"entry.png: {size} bytes copied to {target} (sha256 {src_hash[:12]}...)")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
