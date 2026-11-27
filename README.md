@@ -1,49 +1,48 @@
-# THE WORLD — 26 November 2026, v6
+# THE WORLD — Thursday 26 November 2026 (version 8)
 
-A broadsheet front page for **Thursday 26 November 2026**: 38 stories
-across 10 regions, built as a deliberate step up from v5 (48 stories,
-score 959408, rank 5067 of 9,542 — too dense, only 7 wins in 12 pairwise
-matches). The winners score ~991,000 with 36–39 stories and 12–0 wins,
-so v6 goes fewer, bigger, cleaner.
+Magazine-style front page, a radical redesign after v6 (38 stories,
+rank pending) and v5 (score 959408, rank 5067 of 9,542 — the top
+entries score ~991,000 with 36–39 stories and 12–0 pairwise wins).
 
-## What is on the page
+## What's different from v6
 
-- **Masthead** — THE WORLD, Thursday 26 November 2026, late edition.
-- **Date check strip** — every story dated today, all confirmed.
-- **Lead illustration** — a drawn night scene over a Gulf skyline: a
-  drone, a radar tower and the blast. Headline: DRONES KILL TWO
-  ITALIANS IN KUWAIT, with a red ✓ CONFIRMED pill. Two Italian
-  Rheinmetall technicians were killed at an air-defence station in
-  Kuwait; Italy and Kuwait blame Iran, Tehran denies any role.
-- **The Top 8** — numbered, with one-line decks: Kuwait killings,
-  Kyiv hypersonic strikes, US tariffs on 14 partners, Macy's parade
-  postponed, Gaza strikes, Cairo tanker blast (31 dead), new ECB chief,
-  Gukesh–Sindarov Game 3 drawn 1.5–1.5.
-- **By the numbers strip** — 2 killed in Kuwait, 31 dead in Cairo,
-  14 tariff targets, 60 moves in Game 3.
-- **Hero world map** — simplified continents with 8 marked flashpoints
-  (Brussels, Kyiv, Gaza, Kuwait, Ras Tanura, Kinshasa, Bangkok,
-  Canberra) and leader-line labels.
-- **The day in UTC** — six timed events, 01:32 to 18:43.
-- **Around the world** — 10 region groups, 30 more stories, one line
-  each: Europe, Asia-Pacific, Ukraine War, Africa, Culture, Americas,
-  Cyber, Defence, The Gulf, Markets.
+- **One dominant drawn scene** takes the whole top half: Kuwait City
+  at night — skyline, Kuwait Towers, a radar tower, drones with red
+  trails, and the explosion glow at the air-defence site. Not a small
+  box, but the page's hero.
+- **36 stories** (v6 had 38, v5 had 48) — fewer, bigger, cleaner.
+- **Top 6** instead of Top 8, with one-line decks.
+- **Very large type everywhere** — the masthead, the giant lead
+  headline ("DRONES KILL TWO ITALIANS IN KUWAIT", with a red
+  ✓ CONFIRMED pill), the numbers strip, and the section headers are
+  all readable at 300 px at a glance. Lots of white space, nothing
+  crowded.
+- 8 region groups (The Gulf, Europe, Ukraine War, Asia-Pacific,
+  Africa, Americas, Markets & Tech, Culture & Sport) plus an Also
+  Today box, a "THE DAY IN UTC" timeline (6 timed events, 01:32–
+  19:45), and a compact world-map strip with the day's flashpoints.
+
+## Stories
+
+All 36 stories are specific and dated 26 November 2026, researched
+fresh via web search this session. Lead: Iranian drones kill two
+Italian Rheinmetall technicians at a Kuwait air-defence site (Italy
+and Kuwait blame Iran; Tehran denies). Also: Cairo Ring Road tanker
+blast (31 dead), Kyiv shopping-centre strike (7 hurt), US tariffs on
+14 economies, Gaza strikes kill a Hamas deputy minister, IRGC mine
+claim on a supertanker, Congo Ebola past 12,021 cases, Macy's parade
+postponed for the first time in 100 years.
 
 ## Files
 
-- `draw.py` — draws `output/entry.png` with Pillow (DejaVu fonts).
+- `draw.py` — draws `output/entry.png` locally with Pillow
+  (deterministic, fixed random seed).
 - `main.py` — standard-library-only; copies `output/entry.png` to
-  `/output/entry.png` after checking the PNG signature and size, then
-  verifies the copy with SHA-256.
-- `output/entry.png` — the finished page, 1024×1024.
+  `$MAKEFUN_OUTPUT_DIR/entry.png`, checks the PNG signature and
+  1024×1024 size, verifies the copy with SHA-256.
+- `output/entry.png` — 1024×1024 PNG, 149,020 bytes.
 
 ## Verification
 
-`draw.py` runs clean; the image is 1024×1024 and under 1 MiB.
-`main.py` runs twice with byte-identical output. The page was inspected
-at full size, 512 px and 300 px: masthead, lead, Top 8, numbers, map,
-timeline and region columns all read clearly, nothing cut off or
-overlapping.
-
-Sources: Reuters, AP, CNN, Chess.com, Nasdaq, Hamer Intel — all stories
-dated Thursday 26 November 2026.
+`main.py` was run twice with different output directories; both
+outputs are byte-identical to each other and to `output/entry.png`.
